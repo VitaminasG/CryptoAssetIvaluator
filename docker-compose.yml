@@ -3,25 +3,25 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: nginx/Dockerfile
+      dockerfile: .docker/nginx/Dockerfile
     depends_on:
       - php
     volumes:
-      - ./:/var/www/html/
+      - ./:/data
     networks:
       default:
         aliases:
-          - 'symfony.local'
+          - dev.local
         ipv4_address: 172.20.120.2
 
   php:
     build:
       context: .
-      dockerfile: php/Dockerfile
+      dockerfile: .docker/php/Dockerfile
     networks:
       - default
     volumes:
-      - ./data/:/var/www/html/
+      - ./:/data
 
   mariadb:
     image: mariadb:11-jammy
@@ -29,16 +29,38 @@ services:
     userns_mode: "host"
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_DATABASE: test
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test
+      - TZ=Europe/Vilnius
     volumes:
       - mariadb-data:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
       - default
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8088:80'
+    environment:
+      PMA_HOST: mariadb
+      PMA_DATABASE: test
+      PMA_USER: test
+      PMA_PASSWORD: test
+      PMA_ROOT_PASSWORD: root
+    links:
+      - mariadb
+    depends_on:
+      - mariadb
+    networks:
+      default:
+        aliases:
+          - dev.pma.local
+        ipv4_address: 172.20.120.3
 
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
@@ -56,29 +78,8 @@ services:
     networks:
       default:
         aliases:
-          - 'symfony.rabbitmq.local'
+          - dev.rabbitmq.local
         ipv4_address: 172.20.131.4
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    ports:
-      - '8088:80'
-    environment:
-      PMA_HOST: mariadb
-      PMA_DATABASE: local
-      PMA_USER: local
-      PMA_PASSWORD: local
-      PMA_ROOT_PASSWORD: root
-    links:
-      - mariadb
-    depends_on:
-      - mariadb
-    networks:
-      default:
-        aliases:
-          - 'symfony.pma.local'
-        ipv4_address: 172.20.120.3
 
 volumes:
   mariadb-data:
