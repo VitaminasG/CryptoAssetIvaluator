@@ -1,7 +1,6 @@
 .idea
 .composer
 logs
-###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
 /.env.*.local
@@ -9,4 +8,3 @@ logs
 /public/bundles/
 /var/
 /vendor/
-###< symfony/framework-bundle ###
