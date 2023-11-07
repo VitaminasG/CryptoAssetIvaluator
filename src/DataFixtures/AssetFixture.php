@@ -23,6 +23,7 @@ class AssetFixture extends Fixture
     {
         $user = new User();
         $user->setEmail('user1@example.com');
+        $user->setRoles(['ROLE_USER']);
         $user->setPassword($this->passwordEncoder->hashPassword(
             $user,
             'password123'
