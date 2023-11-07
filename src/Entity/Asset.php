@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\CurrencyEnum;
 use App\Repository\AssetRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,15 +17,15 @@ class Asset
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $currency = null;
+    #[ORM\Column(type: 'string', enumType: CurrencyEnum::class)]
+    private ?CurrencyEnum $currency = null;
 
     #[ORM\Column]
     #[Assert\GreaterThanOrEqual(
@@ -41,6 +42,7 @@ class Asset
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
         return $this;
     }
 
@@ -61,12 +63,12 @@ class Asset
         return $this;
     }
 
-    public function getCurrency(): ?string
+    public function getCurrency(): ?CurrencyEnum
     {
         return $this->currency;
     }
 
-    public function setCurrency(string $currency): static
+    public function setCurrency(CurrencyEnum $currency): self
     {
         $this->currency = $currency;
 

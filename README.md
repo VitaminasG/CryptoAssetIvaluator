@@ -3,6 +3,15 @@
 sudo apt-get install docker docker-compose  
 ```
 
+## Important!
+After docker build, please migrate schema and add fixtures:
+```console
+php bin/console doctrine:migrations:migrate
+```
+```console
+php bin/console doctrine:fixtures:load
+```
+
 ### Add Aliases to /etc/hosts
 Add the following lines to `/etc/hosts`:
 ```console
