@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO\Asset;
+namespace App\DTO\Asset\Input;
 
 enum LabelEnum: string
 {

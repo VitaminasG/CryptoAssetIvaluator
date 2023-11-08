@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\DTO\Asset\CurrencyEnum;
-use App\DTO\Asset\LabelEnum;
+use App\DTO\Asset\Input\CurrencyEnum;
+use App\DTO\Asset\Input\LabelEnum;
 use App\Entity\Asset;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;

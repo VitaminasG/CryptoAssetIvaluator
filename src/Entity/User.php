@@ -13,25 +13,37 @@ use Doctrine\Common\Collections\Collection;
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    private const DEFAULT_USER_ROLE = 'ROLE_USER';
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer')]
+    private int $id;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column]
     private array $roles = [];
 
     #[ORM\Column]
-    private ?string $password = null;
+    private string $password;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Asset::class, orphanRemoval: true)]
     private Collection $assets;
 
     public function __construct() {
         $this->assets = new ArrayCollection();
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
@@ -63,11 +75,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -87,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**
@@ -96,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
+        $roles[] = self::DEFAULT_USER_ROLE;
 
         return array_unique($roles);
     }

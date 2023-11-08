@@ -24,5 +24,8 @@ ssh:
 clear_cache:
 	$(DOCKER_COMPOSE) exec php bin/console cache:clear
 
+migrate:
+	$(DOCKER_COMPOSE) exec php bin/console doctrine:migrations:migrate
+
 composer_install:
 	$(DOCKER_COMPOSE) $(EXECUTION_TYPE) php composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-scripts

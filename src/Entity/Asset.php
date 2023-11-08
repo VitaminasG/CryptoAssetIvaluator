@@ -2,15 +2,13 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\DTO\Asset\CurrencyEnum;
-use App\DTO\Asset\LabelEnum;
+use App\DTO\Asset\Input\CurrencyEnum;
+use App\DTO\Asset\Input\LabelEnum;
 use App\Repository\AssetRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AssetRepository::class)]
-#[ApiResource]
 class Asset
 {
     #[ORM\Id]
@@ -20,7 +18,7 @@ class Asset
 
     #[ORM\ManyToOne(targetEntity: User::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null;
+    private User $owner;
 
     #[ORM\Column(type: 'string', enumType: LabelEnum::class)]
     private LabelEnum $label;
