@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-use App\DTO\Asset\Input\CurrencyEnum;
+use App\DTO\Asset\Input\CurrencyIdEnum;
+use App\DTO\Asset\Input\CurrencyNameEnum;
 use App\DTO\Asset\Input\LabelEnum;
 use App\Repository\AssetRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,8 +24,11 @@ class Asset
     #[ORM\Column(type: 'string', enumType: LabelEnum::class)]
     private LabelEnum $label;
 
-    #[ORM\Column(type: 'string', enumType: CurrencyEnum::class)]
-    private CurrencyEnum $currency;
+    #[ORM\Column(type: 'string', enumType: CurrencyNameEnum::class)]
+    private CurrencyNameEnum $currencyName;
+
+    #[ORM\Column(type: 'string', enumType: CurrencyIdEnum::class)]
+    private CurrencyIdEnum $currencyId;
 
     #[ORM\Column]
     #[Assert\GreaterThanOrEqual(
@@ -62,14 +66,26 @@ class Asset
         return $this;
     }
 
-    public function getCurrency(): CurrencyEnum
+    public function getCurrencyName(): CurrencyNameEnum
     {
-        return $this->currency;
+        return $this->currencyName;
     }
 
-    public function setCurrency(CurrencyEnum $currency): static
+    public function setCurrencyName(CurrencyNameEnum $currencyName): static
     {
-        $this->currency = $currency;
+        $this->currencyName = $currencyName;
+
+        return $this;
+    }
+
+    public function getCurrencyId(): CurrencyIdEnum
+    {
+        return $this->currencyId;
+    }
+
+    public function setCurrencyId(CurrencyIdEnum $currencyId): static
+    {
+        $this->currencyId = $currencyId;
 
         return $this;
     }

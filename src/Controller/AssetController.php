@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\Asset\Hydrator\AssetOutputTransformer;
-use App\DTO\Asset\Output\AssetDTO;
+use App\DTO\Asset\Output\AssetDto;
 use App\DTO\Error\ValidationError;
 use App\Repository\UserRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -18,10 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class AssetController extends AbstractController
 {
     private AssetOutputTransformer $assetOutputTransformer;
+    private UserRepository $userRepository;
 
-    public function __construct(AssetOutputTransformer $assetOutputTransformer)
-    {
+    public function __construct(
+        AssetOutputTransformer $assetOutputTransformer,
+        UserRepository $userRepository
+    ) {
         $this->assetOutputTransformer = $assetOutputTransformer;
+        $this->userRepository = $userRepository;
     }
 
     #[Route('/user/{id}/asset', methods: ['GET'])]
@@ -38,7 +42,7 @@ class AssetController extends AbstractController
         description: 'Successful response',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: AssetDTO::class))
+            items: new OA\Items(ref: new Model(type: AssetDto::class))
         )
     )]
     #[OA\Response(
@@ -46,9 +50,9 @@ class AssetController extends AbstractController
         description: 'User not found',
         content: new OA\JsonContent(ref: new Model(type: ValidationError::class))
     )]
-    public function index(int $id, UserRepository $userRepository): Response
+    public function index(int $id): Response
     {
-        if ($user = $userRepository->find($id)) {
+        if ($user = $this->userRepository->find($id)) {
             $assetOutput = $this->assetOutputTransformer->transform($user->getAssets());
 
             return $this->json($assetOutput, Response::HTTP_OK);

@@ -4,24 +4,22 @@ declare(strict_types=1);
 
 namespace App\DTO\Asset\Output;
 
-use App\DTO\Asset\Input\CurrencyEnum;
 use App\DTO\Asset\Input\LabelEnum;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class AssetDTO
+class AssetDto
 {
     #[Assert\NotBlank]
     public readonly int $id;
 
     #[Assert\NotBlank]
+    #[SerializedName('label')]
     public readonly LabelEnum $label;
 
     #[Assert\NotBlank]
-    public readonly CurrencyEnum $currency;
-
-    #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[SerializedName('value')]
     public readonly float $value;
 
     #[Assert\NotBlank]
@@ -35,14 +33,12 @@ class AssetDTO
     public function __construct(
         int $id,
         LabelEnum $label,
-        CurrencyEnum $currency,
         float $value,
         float $exchangeRate,
         float $valueInUSD
     ) {
         $this->id = $id;
         $this->label = $label;
-        $this->currency = $currency;
         $this->value = $value;
         $this->exchangeRate = $exchangeRate;
         $this->valueInUSD = $valueInUSD;
@@ -56,11 +52,6 @@ class AssetDTO
     public function getLabel(): LabelEnum
     {
         return $this->label;
-    }
-
-    public function getCurrency(): CurrencyEnum
-    {
-        return $this->currency;
     }
 
     public function getValue(): float

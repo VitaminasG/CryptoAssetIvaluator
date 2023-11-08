@@ -4,37 +4,89 @@ declare(strict_types=1);
 
 namespace App\DTO\Asset\Hydrator;
 
-use App\DTO\Asset\Output\AssetDTO;
+use App\DTO\Asset\Output\AssetDto;
+use App\DTO\Asset\Output\AssetTotalDto;
 use App\Entity\Asset;
 use Doctrine\Common\Collections\Collection;
 
 class AssetOutputTransformer
 {
+    private const DEFAULT_TOTAL_VALUE = 0.00;
+
     /**
      * @param Collection<int, Asset> $assets
      *
-     * @return AssetDTO[]
+     * @return AssetDto[]
      */
     public function transform(Collection $assets): array
     {
-        $list = [];
+        $sortedList = [];
 
         foreach ($assets as $asset) {
-            $list[] = $this->getAssetDTO($asset);
+            $sortedList[$asset->getCurrencyName()->value][] = $asset;
+        }
+
+        return $this->getFinalList($sortedList);
+    }
+
+    /**
+     * @param array<string, array<int, Asset>> $sortedList
+     *
+     * @return AssetTotalDto[]
+     */
+    private function getFinalList(array $sortedList): array
+    {
+        $list = [];
+
+        foreach ($sortedList as $currencyName => $assets) {
+            $total = self::DEFAULT_TOTAL_VALUE;
+
+            foreach ($assets as $asset) {
+                $total += $asset->getValue();
+            }
+
+            $list[] = $this->getAssetTotalDto($currencyName, $total, $assets);
         }
 
         return $list;
     }
 
-    private function getAssetDTO(Asset $asset): AssetDTO
+    /**
+     * @param Asset[] $assets
+     */
+    private function getAssetTotalDto(string $currencyName, float $total, array $assets): AssetTotalDto
     {
-        return new AssetDTO(
+        return new AssetTotalDto(
+            $currencyName,
+            $total,
+            $this->getAssetDtoList($assets)
+        );
+    }
+
+    /**
+     * @param Asset[] $assets
+     *
+     * @return AssetDto[]
+     */
+    private function getAssetDtoList(array $assets): array
+    {
+        $list = [];
+
+        foreach ($assets as $asset) {
+            $list[] = $this->getAssetDto($asset);
+        }
+
+        return $list;
+    }
+
+    private function getAssetDto(Asset $asset): AssetDto
+    {
+        return new AssetDto(
             $asset->getId(),
             $asset->getLabel(),
-            $asset->getCurrency(),
             $asset->getValue(),
-            0.00,
-            0.00
+            self::DEFAULT_TOTAL_VALUE,
+            self::DEFAULT_TOTAL_VALUE
         );
     }
 }

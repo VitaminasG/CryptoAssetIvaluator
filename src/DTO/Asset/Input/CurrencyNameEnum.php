@@ -2,7 +2,7 @@
 
 namespace App\DTO\Asset\Input;
 
-enum CurrencyEnum: string
+enum CurrencyNameEnum: string
 {
     case BTC = 'BTC';
     case ETH = 'ETH';
