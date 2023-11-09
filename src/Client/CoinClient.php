@@ -7,15 +7,12 @@ namespace App\Client;
 use App\DTO\Asset\Input\ChannelTimeTypeEnum;
 use App\DTO\Asset\Input\ChannelTypeEnum;
 use App\DTO\Asset\Input\CurrencyTypeEnum;
-use JsonException;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -40,7 +37,7 @@ class CoinClient
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
-     * @throws JsonException
+     * @throws \JsonException
      */
     public function getJsonResponse(
         string $currencyId,
@@ -59,7 +56,7 @@ class CoinClient
                 )
             );
         } catch (TransportExceptionInterface $exception) {
-            throw new RuntimeException($exception->getMessage());
+            throw new \RuntimeException($exception->getMessage());
         }
 
         return $response->getContent();
@@ -70,13 +67,13 @@ class CoinClient
         string $channelType = null,
         string $channelTimeType = null,
         string $currencyType = null
-    ):string {
+    ): string {
         return $this->getDomain()
-            . '/'
-            . $currencyId
-            . $this->getChannelType($channelType)
-            . $this->getChannelTimeType($channelTimeType)
-            . $this->getCurrencyType($currencyType);
+            .'/'
+            .$currencyId
+            .$this->getChannelType($channelType)
+            .$this->getChannelTimeType($channelTimeType)
+            .$this->getCurrencyType($currencyType);
     }
 
     protected function getSerializer(): Serializer
@@ -90,14 +87,6 @@ class CoinClient
             $normalizers,
             [new JsonEncoder()]
         );
-
-//        return new Serializer(
-//            [
-//                $normalizer,
-//                new ArrayDenormalizer()
-//            ],
-//            [new JsonEncoder()]
-//        );
     }
 
     protected function getDomain(): string
@@ -107,16 +96,16 @@ class CoinClient
 
     protected function getChannelType(string $channelType = null): string
     {
-        return '/' . $channelType ?: (ChannelTypeEnum::EMPTY)->toString();
+        return '/'.$channelType ?: (ChannelTypeEnum::EMPTY)->toString();
     }
 
     protected function getChannelTimeType(string $channelTimeType = null): string
     {
-        return '/' . $channelTimeType ?: (ChannelTimeTypeEnum::EMPTY)->toString();
+        return '/'.$channelTimeType ?: (ChannelTimeTypeEnum::EMPTY)->toString();
     }
 
     protected function getCurrencyType(string $currencyType = null): string
     {
-        return '?quotes=' . $currencyType ?: (CurrencyTypeEnum::EMPTY)->toString();
+        return '?quotes='.$currencyType ?: (CurrencyTypeEnum::EMPTY)->toString();
     }
 }

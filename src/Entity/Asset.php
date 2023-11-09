@@ -33,7 +33,7 @@ class Asset
     #[ORM\Column]
     #[Assert\GreaterThanOrEqual(
         value: 0,
-        message: "Value cannot be negative"
+        message: 'Value cannot be negative'
     )]
     private float $value;
 

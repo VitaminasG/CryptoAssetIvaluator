@@ -9,7 +9,6 @@ use App\DTO\Asset\Input\ChannelTimeTypeEnum;
 use App\DTO\Asset\Input\ChannelTypeEnum;
 use App\DTO\Asset\Input\CurrencyTypeEnum;
 use App\DTO\Asset\Input\ExchangeRateDto;
-use JsonException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -26,19 +25,19 @@ class ExchangeRateProvider extends CoinClient
         try {
             $jsonResponse = $this->getJsonResponse(
                 $currencyId,
-                (ChannelTypeEnum::OHLCV)->toString(),
-                (ChannelTimeTypeEnum::TODAY)->toString(),
-                (CurrencyTypeEnum::DEFAULT)->toString()
+                ChannelTypeEnum::OHLCV->toString(),
+                ChannelTimeTypeEnum::TODAY->toString(),
+                CurrencyTypeEnum::DEFAULT->toString()
             );
 
-            $exchangeRates =  $this->getSerializer()->deserialize(
+            $exchangeRates = $this->getSerializer()->deserialize(
                 $jsonResponse,
-                ExchangeRateDto::class. '[]',
+                ExchangeRateDto::class.'[]',
                 'json'
             );
 
             return reset($exchangeRates);
-        } catch (JsonException|TransportExceptionInterface|ServerExceptionInterface
+        } catch (\JsonException|TransportExceptionInterface|ServerExceptionInterface
         |ClientExceptionInterface|RedirectionExceptionInterface $exception) {
             throw new BadRequestException($exception->getMessage());
         }

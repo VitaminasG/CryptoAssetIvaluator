@@ -25,7 +25,8 @@ final class ExchangeRateDto
         public readonly float $volume,
         #[SerializedName('market_cap')]
         public readonly float $marketCap
-    ) {}
+    ) {
+    }
 
     public function getTimeOpen(): string
     {

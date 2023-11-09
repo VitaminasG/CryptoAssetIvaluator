@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-    #[Route("/", name: "default", methods: ["GET"])]
+    #[Route('/', name: 'default', methods: ['GET'])]
     public function index(): RedirectResponse
     {
         return $this->redirectToRoute('app.swagger_ui');

@@ -58,6 +58,11 @@ class AssetController extends AbstractController
             return $this->json($assetOutput, Response::HTTP_OK);
         }
 
-        return $this->json(new ValidationError(Response::HTTP_NOT_FOUND, 'User not found'));
+        return $this->json(
+            new ValidationError(
+                Response::HTTP_NOT_FOUND,
+                'User not found'
+            )
+        );
     }
 }

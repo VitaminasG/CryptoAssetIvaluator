@@ -7,7 +7,8 @@ class ValidationError
     public function __construct(
         private readonly int $code,
         private readonly string $message
-    ) {}
+    ) {
+    }
 
     public function getCode(): int
     {
