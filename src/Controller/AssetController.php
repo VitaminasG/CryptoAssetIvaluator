@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\Asset\Hydrator\AssetOutputTransformer;
-use App\DTO\Asset\Output\AssetDto;
+use App\DTO\Asset\Output\AssetTotalDto;
 use App\DTO\Error\ValidationError;
 use App\Repository\UserRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -42,7 +42,7 @@ class AssetController extends AbstractController
         description: 'Successful response',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: AssetDto::class))
+            items: new OA\Items(ref: new Model(type: AssetTotalDto::class))
         )
     )]
     #[OA\Response(

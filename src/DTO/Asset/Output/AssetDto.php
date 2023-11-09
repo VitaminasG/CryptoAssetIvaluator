@@ -23,8 +23,8 @@ class AssetDto
     public readonly float $value;
 
     #[Assert\NotBlank]
-    #[SerializedName('exchangeRate')]
-    public readonly float $exchangeRate;
+    #[SerializedName('exchangeRateInUSD')]
+    public readonly float $exchangeRateInUSD;
 
     #[Assert\NotBlank]
     #[SerializedName('valueInUSD')]
@@ -34,13 +34,13 @@ class AssetDto
         int $id,
         LabelEnum $label,
         float $value,
-        float $exchangeRate,
+        float $exchangeRateInUSD,
         float $valueInUSD
     ) {
         $this->id = $id;
         $this->label = $label;
         $this->value = $value;
-        $this->exchangeRate = $exchangeRate;
+        $this->exchangeRateInUSD = $exchangeRateInUSD;
         $this->valueInUSD = $valueInUSD;
     }
 
@@ -59,9 +59,9 @@ class AssetDto
         return $this->value;
     }
 
-    public function getExchangeRate(): float
+    public function getExchangeRateInUSD(): float
     {
-        return $this->exchangeRate;
+        return $this->exchangeRateInUSD;
     }
 
     public function getValueInUSD(): float

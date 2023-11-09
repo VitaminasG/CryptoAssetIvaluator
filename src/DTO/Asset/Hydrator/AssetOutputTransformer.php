@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Asset\Hydrator;
 
+use App\Client\Decorator\ExchangeRateProvider;
 use App\DTO\Asset\Output\AssetDto;
 use App\DTO\Asset\Output\AssetTotalDto;
 use App\Entity\Asset;
@@ -12,6 +13,13 @@ use Doctrine\Common\Collections\Collection;
 class AssetOutputTransformer
 {
     private const DEFAULT_TOTAL_VALUE = 0.00;
+
+    private ExchangeRateProvider $exchangeRateClient;
+
+    public function __construct(ExchangeRateProvider $exchangeRateClient)
+    {
+        $this->exchangeRateClient = $exchangeRateClient;
+    }
 
     /**
      * @param Collection<int, Asset> $assets
@@ -81,12 +89,21 @@ class AssetOutputTransformer
 
     private function getAssetDto(Asset $asset): AssetDto
     {
+        $exchangeDto = $this->exchangeRateClient->getExchange(
+            $asset->getCurrencyId()->value
+        );
+
+        $valueInUSD = round(
+            ($asset->getValue() * $exchangeDto->getClose()),
+            2
+        );
+
         return new AssetDto(
             $asset->getId(),
             $asset->getLabel(),
             $asset->getValue(),
-            self::DEFAULT_TOTAL_VALUE,
-            self::DEFAULT_TOTAL_VALUE
+            round($exchangeDto->getClose(), 2),
+            $valueInUSD
         );
     }
 }

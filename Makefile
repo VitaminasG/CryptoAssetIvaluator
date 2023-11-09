@@ -27,5 +27,8 @@ clear_cache:
 migrate:
 	$(DOCKER_COMPOSE) exec php bin/console doctrine:migrations:migrate
 
+load_fixtures:
+	$(DOCKER_COMPOSE) exec php bin/console doctrine:migrations:migrate
+
 composer_install:
 	$(DOCKER_COMPOSE) $(EXECUTION_TYPE) php composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-scripts
