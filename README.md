@@ -4,7 +4,7 @@ sudo apt-get install docker docker-compose
 ```
 
 ## Code Fixer:
-* friendsofphp/php-cs-fixer - [PHPStorm documentation]((https://www.google.com)https://www.jetbrains.com/help/phpstorm/using-php-cs-fixer.html#installing-configuring-php-cs-fixer)
+* friendsofphp/php-cs-fixer - [PHPStorm documentation](https://www.jetbrains.com/help/phpstorm/using-php-cs-fixer.html#installing-configuring-php-cs-fixer)
 
 ## Important!
 After docker build, please migrate schema and add fixtures:
