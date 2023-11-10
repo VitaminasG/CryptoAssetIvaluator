@@ -94,7 +94,7 @@ class AssetOutputTransformer
         );
 
         $valueInUSD = round(
-            ($asset->getValue() * $exchangeDto->getClose()),
+            $asset->getValue() * $exchangeDto->getClose(),
             2
         );
 

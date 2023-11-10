@@ -2,7 +2,7 @@
 
 namespace App\DTO\Asset\Input;
 
-enum ChannelTypeEnum: string
+enum ChannelTypeEnum: string implements AssetInputInterface
 {
     case OHLCV = 'ohlcv';
     case EVENTS = 'events';

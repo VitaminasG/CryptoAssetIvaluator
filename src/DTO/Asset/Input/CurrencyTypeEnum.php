@@ -2,7 +2,7 @@
 
 namespace App\DTO\Asset\Input;
 
-enum CurrencyTypeEnum: string
+enum CurrencyTypeEnum: string implements AssetInputInterface
 {
     case DEFAULT = 'usd';
     case EMPTY = '';

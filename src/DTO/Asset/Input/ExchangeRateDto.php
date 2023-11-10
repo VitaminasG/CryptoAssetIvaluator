@@ -6,7 +6,7 @@ namespace App\DTO\Asset\Input;
 
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-final class ExchangeRateDto
+final class ExchangeRateDto implements AssetInputInterface
 {
     public function __construct(
         #[SerializedName('time_open')]

@@ -2,7 +2,7 @@
 
 namespace App\DTO\Asset\Input;
 
-enum CurrencyIdEnum: string
+enum CurrencyIdEnum: string implements AssetInputInterface
 {
     case BTC = 'btc-bitcoin';
     case ETH = 'eth-ethereum';
