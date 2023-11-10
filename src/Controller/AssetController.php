@@ -6,11 +6,11 @@ namespace App\Controller;
 
 use App\DTO\Asset\Hydrator\AssetOutputTransformer;
 use App\DTO\Asset\Input\AssetCollectionDto;
-use App\DTO\Asset\Input\AssetDto as InputAssetDto;
 use App\DTO\Asset\Output\AssetTotalDto;
 use App\DTO\Asset\Resolver\Input\AssetCollectionValueResolver;
 use App\DTO\Error\ValidationError;
 use App\Repository\UserRepository;
+use App\Service\AssetCreateService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +24,16 @@ class AssetController extends AbstractController
 {
     private AssetOutputTransformer $assetOutputTransformer;
     private UserRepository $userRepository;
+    private AssetCreateService $assetCreateService;
 
     public function __construct(
         AssetOutputTransformer $assetOutputTransformer,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        AssetCreateService $assetCreateService
     ) {
         $this->assetOutputTransformer = $assetOutputTransformer;
         $this->userRepository = $userRepository;
+        $this->assetCreateService = $assetCreateService;
     }
 
     #[Route('/user/{id}/asset', methods: [Request::METHOD_GET])]
@@ -75,8 +78,7 @@ class AssetController extends AbstractController
     #[Route('/user/{id}/asset', methods: [Request::METHOD_POST])]
     #[OA\Post(
         path: '/user/{id}/asset',
-        description: 'Asset data that needs to be added to the user',
-        summary: 'Add an asset to a user by their ID'
+        description: 'Asset data that needs to be added to the user'
     )]
     #[OA\Tag('Assets')]
     #[OA\Parameter(
@@ -90,12 +92,7 @@ class AssetController extends AbstractController
         new OA\Response(
             response: Response::HTTP_OK,
             description: 'Asset successfully added',
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: 'data', type: 'string', example: 'OK'),
-                ],
-                type: 'object'
-            )
+            content: new OA\JsonContent(type: 'string')
         )
     )]
     #[OA\Response(
@@ -116,6 +113,7 @@ class AssetController extends AbstractController
         int $id
     ): Response {
         if (!$user = $this->userRepository->find($id)) {
+
             return $this->json(
                 new ValidationError(
                     Response::HTTP_NOT_FOUND,
@@ -124,6 +122,8 @@ class AssetController extends AbstractController
             );
         }
 
-        return $this->json($assetCollectionDto, Response::HTTP_OK);
+        $this->assetCreateService->create($assetCollectionDto, $user);
+
+        return $this->json('OK', Response::HTTP_OK);
     }
 }
