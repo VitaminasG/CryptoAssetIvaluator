@@ -9,7 +9,7 @@ use App\DTO\Asset\Input\AssetCollectionDto;
 use App\Entity\User;
 use App\Repository\UserRepository;
 
-class AssetCreateService
+class AssetDeleteService
 {
     private UserRepository $userRepository;
     private AssetInputTransformer $assetInputTransformer;
@@ -22,10 +22,15 @@ class AssetCreateService
         $this->assetInputTransformer = $assetInputTransformer;
     }
 
-    public function create(AssetCollectionDto $assetCollectionDto, User $user): void
+    public function delete(AssetCollectionDto $assetCollectionDto, User $user): void
     {
         foreach ($this->assetInputTransformer->transform($assetCollectionDto, $user) as $asset) {
-            $user->addAsset($asset);
+            foreach ($user->getAssets() as $key => $savedAsset) {
+                if ($savedAsset->isEqualTo($asset)) {
+                    $user->getAssets()->remove($key);
+                    break;
+                }
+            }
         }
 
         $this->userRepository->save($user);

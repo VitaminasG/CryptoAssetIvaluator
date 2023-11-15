@@ -27,6 +27,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * @throws \LogicException
+     */
+    public function save(User $entity): void
+    {
+        try {
+            $this->_em->persist($entity);
+            $this->_em->flush();
+        } catch (\Exception $exception) {
+            throw new \LogicException($exception->getMessage());
+        }
+    }
+
+    /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void

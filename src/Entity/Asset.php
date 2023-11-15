@@ -101,4 +101,12 @@ class Asset
 
         return $this;
     }
+
+    public function isEqualTo(Asset $comparedAsset): bool
+    {
+        return $this->label === $comparedAsset->label
+            && $this->currencyName === $comparedAsset->currencyName
+            && $this->currencyId === $comparedAsset->currencyId
+            && $this->value === $comparedAsset->value;
+    }
 }

@@ -29,7 +29,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private string $password;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Asset::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Asset::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $assets;
 
     public function __construct()
@@ -60,17 +60,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!$this->assets->contains($asset)) {
             $this->assets[] = $asset;
             $asset->setOwner($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAsset(Asset $asset): self
-    {
-        if ($this->assets->removeElement($asset)) {
-            if ($asset->getOwner() === $this) {
-                $asset->setOwner(null);
-            }
         }
 
         return $this;
