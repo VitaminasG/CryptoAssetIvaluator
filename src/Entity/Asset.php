@@ -106,7 +106,6 @@ class Asset
     {
         return $this->label === $comparedAsset->label
             && $this->currencyName === $comparedAsset->currencyName
-            && $this->currencyId === $comparedAsset->currencyId
-            && $this->value === $comparedAsset->value;
+            && $this->currencyId === $comparedAsset->currencyId;
     }
 }
