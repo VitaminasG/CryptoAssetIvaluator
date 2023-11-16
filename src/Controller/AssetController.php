@@ -12,6 +12,7 @@ use App\DTO\Error\ValidationError;
 use App\Repository\UserRepository;
 use App\Service\AssetCreateService;
 use App\Service\AssetDeleteService;
+use App\Service\AssetUpdateService;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,17 +28,20 @@ class AssetController extends AbstractController
     private UserRepository $userRepository;
     private AssetCreateService $assetCreateService;
     private AssetDeleteService $assetDeleteService;
+    private AssetUpdateService $assetUpdateService;
 
     public function __construct(
         AssetOutputTransformer $assetOutputTransformer,
         UserRepository $userRepository,
         AssetCreateService $assetCreateService,
-        AssetDeleteService $assetDeleteService
+        AssetDeleteService $assetDeleteService,
+        AssetUpdateService $assetUpdateService
     ) {
         $this->assetOutputTransformer = $assetOutputTransformer;
         $this->userRepository = $userRepository;
         $this->assetCreateService = $assetCreateService;
         $this->assetDeleteService = $assetDeleteService;
+        $this->assetUpdateService = $assetUpdateService;
     }
 
     #[Route('/user/{id}/asset', methods: [Request::METHOD_GET])]
@@ -131,10 +135,7 @@ class AssetController extends AbstractController
     }
 
     #[Route('/user/{id}/asset', methods: [Request::METHOD_DELETE])]
-    #[OA\Delete(
-        path: '/user/{id}/asset',
-        description: 'Asset data that needs to be removed from the user'
-    )]
+    #[OA\Delete(path: '/user/{id}/asset', description: 'Asset data that needs to be removed from the user')]
     #[OA\Tag('Assets')]
     #[OA\Parameter(
         name: 'id',
@@ -177,6 +178,59 @@ class AssetController extends AbstractController
         }
 
         $this->assetDeleteService->delete($assetCollectionDto, $user);
+
+        return $this->json('OK', Response::HTTP_OK);
+    }
+
+    #[Route('/user/{id}/asset', methods: [Request::METHOD_PATCH])]
+    #[OA\Patch(path: '/user/{id}/asset', description: 'Asset data that needs to be updated for User.')]
+    #[OA\Tag('Assets')]
+    #[OA\Parameter(
+        name: 'id',
+        description: 'ID of the user to fetch assets for',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Response(
+        new OA\Response(
+            response: Response::HTTP_OK,
+            description: 'Asset successfully updated',
+            content: new OA\JsonContent(type: 'string')
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Invalid input',
+        content: new OA\JsonContent(ref: new Model(type: ValidationError::class))
+    )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'User not found',
+        content: new OA\JsonContent(ref: new Model(type: ValidationError::class))
+    )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'User not found',
+        content: new OA\JsonContent(ref: new Model(type: ValidationError::class))
+    )]
+    public function update(
+        #[MapRequestPayload(
+            resolver: AssetCollectionValueResolver::class
+        )]
+        AssetCollectionDto $assetCollectionDto,
+        int $id
+    ): Response {
+        if (!$user = $this->userRepository->find($id)) {
+            return $this->json(
+                new ValidationError(
+                    Response::HTTP_NOT_FOUND,
+                    'User not found'
+                )
+            );
+        }
+
+        $this->assetUpdateService->update($assetCollectionDto, $user);
 
         return $this->json('OK', Response::HTTP_OK);
     }
